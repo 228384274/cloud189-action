@@ -1,2 +1,2 @@
-rsa
-requests
+requests==2.24.0
+rsa==4.6

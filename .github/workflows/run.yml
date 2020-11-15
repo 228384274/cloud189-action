@@ -11,27 +11,30 @@ on:
     types: started
 
 jobs:
-  build:
+  check-in:
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - uses: actions/checkout@v2
-    - name: 初始化Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: 签到
+
+    - name: Install Python
       run: |
-        pip install -r requirements.txt
+        sudo apt update && \
+        sudo apt install python3
+      
+    - name: requirements
+      run: |
+        pip3 install -r requirements.txt
         
+    - name: Checkin
+      run: |
         user='${{ secrets.USER }}'
         pwd='${{ secrets.PWD }}'
         
         user_list=()
         pwd_list=()
 
-        IFS="#"
+        IFS=" "
 
         for u in ${user[*]}
         do
@@ -55,8 +58,5 @@ jobs:
 
         for ((i=0;i<$user_num;i++))
         do
-        python3 checkin.py <<EOF
-        ${user_list[$i]}
-        ${pwd_list[$i]}
-        EOF
+        python3 checkin.py --username ${user_list[$i]} --password ${pwd_list[$i]}
         done
